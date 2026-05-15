@@ -15,7 +15,7 @@ answer: 1
 ];
 
 let currentQuestion = 0;
-let answers = [];
+let answers = new Array(questions.length).fill(null);
 
 const questionContainer = document.getElementById("question-container");
 const questionNumber = document.getElementById("question-number");
@@ -36,7 +36,11 @@ ${q.options.map((option,index)=>
 
 `
 <button class="option-btn"
-onclick="selectAnswer(${index})">
+onclick="selectAnswer(${index})"
+style="
+background:
+${answers[currentQuestion] === index ? '#4CAF50' : '#e6e6e6'}
+">
 
 ${option}
 
@@ -54,6 +58,8 @@ answers[currentQuestion] = index;
 
 document.querySelectorAll(".q-box")[currentQuestion]
 .style.background = "green";
+
+loadQuestion();
 
 }
 
@@ -108,3 +114,58 @@ loadQuestion();
 
 loadPalette();
 loadQuestion();
+
+
+// TIMER
+
+let timeLeft = 1800;
+
+const timer = document.getElementById("timer");
+
+setInterval(()=>{
+
+let minutes = Math.floor(timeLeft / 60);
+let seconds = timeLeft % 60;
+
+timer.innerHTML =
+`${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+timeLeft--;
+
+if(timeLeft < 0){
+
+submitTest();
+
+}
+
+},1000);
+
+
+// SUBMIT FUNCTION
+
+function submitTest(){
+
+let score = 0;
+
+questions.forEach((q,index)=>{
+
+if(answers[index] === q.answer){
+
+score++;
+
+}
+
+});
+
+questionContainer.innerHTML = `
+
+<h1>Test Completed</h1>
+
+<h2>Your Score: ${score}/${questions.length}</h2>
+
+`;
+
+document.querySelector(".buttons").style.display = "none";
+document.querySelector(".palette").style.display = "none";
+
+}
